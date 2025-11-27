@@ -132,6 +132,8 @@ export class WorkspaceManagerService {
     }
 
     private customizeTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): void {
+        // Force blur on tab to prevent it from being considered focused if it is not visible when user sends CTRL+C
+        tab.emitBlurred();
         tab.disableDynamicTitle = true;
         if (config.title) {
             tab.setTitle(config.title);
