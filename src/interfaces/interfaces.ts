@@ -10,12 +10,11 @@ export interface TabConfig {
     color?: string;
     profile?: string;
     commands?: string[];
-    split?: SplitDirection;
-    secondTab?: TabConfig;
+    splits?: SplittedTabConfig[];
 }
 
-export interface TabCommand {
-    command: string;
+export interface SplittedTabConfig extends TabConfig {
+    direction: SplitDirection;
 }
 
 export enum HOT_KEYS {

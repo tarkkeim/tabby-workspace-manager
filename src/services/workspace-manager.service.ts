@@ -38,10 +38,10 @@ export class WorkspaceManagerService {
                 }
             }
         });
-        setTimeout(() => {
+        setTimeout(async () => {
             if (this.config.store.workspaceManager.runOnStartup) {
                 const profiles = this.loadWorkspaceProfiles();
-                this.buildWorkspace(profiles[this.config.store.workspaceManager.defaultWorkspaceProfile].tabs);
+                await this.buildWorkspace(profiles[this.config.store.workspaceManager.defaultWorkspaceProfile].tabs);
             }
         }, 1000);
     }
@@ -76,18 +76,19 @@ export class WorkspaceManagerService {
     async buildWorkspace(config: TabConfig[]): Promise<void> {
         if (config) {
             const profiles = await this.profileService.getProfiles();
-            for (const element of config) {
-                const selectedProfile = this.findTerminalProfile(profiles, element);
-                const tab = (await this.profileService.openNewTabForProfile(
-                    selectedProfile,
-                )) as BaseTerminalTabComponent<Profile>;
-                this.configureTab(tab, element);
-            }
+            await Promise.all(config.map((c) => this.openAndConfigureTab(profiles, c)));
         }
     }
 
+    private async openAndConfigureTab(profiles: PartialProfile<Profile>[], config: TabConfig): Promise<void> {
+        const selectedProfile = this.findTerminalProfile(profiles, config);
+        const tab = (await this.profileService.openNewTabForProfile(
+            selectedProfile,
+        )) as BaseTerminalTabComponent<Profile>;
+        this.configureTab(tab, config);
+    }
+
     private configureTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): void {
-        tab.disableDynamicTitle = true;
         tab.sessionChanged$
             .pipe(
                 filter((session) => !!session),
@@ -96,14 +97,18 @@ export class WorkspaceManagerService {
             )
             .subscribe(() => {
                 this.customizeTab(tab, config);
-                if (config.split && config.secondTab) {
-                    from((tab.parent as SplitTabComponent).splitTab(tab, config.split))
-                        .pipe(take(1))
-                        .subscribe((newTab) => {
-                            config.secondTab.title = config.title;
-                            config.secondTab.color = config.color;
-                            this.configureTab(newTab as BaseTerminalTabComponent<Profile>, config.secondTab);
-                        });
+                if (config.splits) {
+                    const parent = tab.parent as SplitTabComponent;
+                    for (const split of config.splits) {
+                        // Force apply main tab title and color to splits
+                        split.title = config.title;
+                        split.color = config.color;
+                        from(parent.splitTab(tab, split.direction))
+                            .pipe(delay(100), take(1))
+                            .subscribe((newTab) => {
+                                this.configureTab(newTab as BaseTerminalTabComponent<Profile>, split);
+                            });
+                    }
                 }
             });
     }
@@ -122,19 +127,21 @@ export class WorkspaceManagerService {
             }
             return selectedProfile;
         }
-        return profiles[0];
+        this.toastr.error(`Profile is not set`);
+        return null;
     }
 
-    private customizeTab(tab: BaseTerminalTabComponent<Profile>, element: TabConfig): void {
-        if (element.title) {
-            tab.setTitle(element.title);
-            tab.customTitle = element.title;
+    private customizeTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): void {
+        tab.disableDynamicTitle = true;
+        if (config.title) {
+            tab.setTitle(config.title);
+            tab.customTitle = config.title;
         }
-        if (element.color) {
-            tab.parent.color = element.color;
+        if (config.color) {
+            tab.parent.color = config.color;
         }
-        if (element.commands) {
-            for (const command of element.commands) {
+        if (config.commands) {
+            for (const command of config.commands) {
                 tab.session.write(Buffer.from(`${command}\r`));
             }
         }

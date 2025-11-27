@@ -64,19 +64,22 @@ Open three different tabs:
 Open one tab vertically splitted and split horizontally the right side :
 
 ```
-- title: Example Title 1
+- title: Example of splitted tabs
   color: '#03fccf'
   profile: CMD (clink)
   commands:
-    - echo "This is the left side of the tab"
-  split: r
-  secondTab:
-    commands:
-      - echo "This is the top-right side of the tab"
-    split: b
-    secondTab:
+    - echo "This is the top left section of the tab"
+  splits:
+    - direction: r
       commands:
-        - echo "This is the bottom-right side of the tab"
+        - echo "This is the top right section of the tab"
+      splits:
+        - direction: b
+          commands:
+            - echo "This is the bottom right section of the tab"
+    - direction: b
+      commands:
+        - echo "This is the bottom left section of the tab"
 ```
 
 Possible values for `split`:
