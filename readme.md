@@ -12,6 +12,8 @@
 
 ## Getting Started
 
+Version 0.0.7 of the plugin is compatible with Tabby version 1.0.229.
+
 -   Download the [latest release](https://github.com/johnny-tcy/tabby-workspace-manager/releases)
 -   Locate your plugin folder by clicking Tabby's dedicated button (`%AppData%\tabby\plugins` for Windows users): <img src="https://github.com/johnny-tcy/tabby-workspace-manager/assets/121796416/985c063d-6e94-4085-858b-36c4e65d4d8d">
 -   Create a `node_modules` folder in the `plugins` folder, if it does not already exist
