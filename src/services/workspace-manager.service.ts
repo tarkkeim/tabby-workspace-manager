@@ -8,7 +8,7 @@ import { ElectronService } from 'tabby-electron';
 import { HotkeysService } from 'tabby-core';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { delay, from, take } from 'rxjs';
+import { delay, filter, from, take } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class WorkspaceManagerService {
@@ -87,18 +87,25 @@ export class WorkspaceManagerService {
     }
 
     private configureTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): void {
-        tab.activity$.pipe(delay(100), take(1)).subscribe(() => {
-            this.customizeTab(tab, config);
-            if (config.split && config.secondTab) {
-                from((tab.parent as SplitTabComponent).splitTab(tab, config.split))
-                    .pipe(take(1))
-                    .subscribe((newTab) => {
-                        config.secondTab.title = config.title;
-                        config.secondTab.color = config.color;
-                        this.configureTab(newTab as BaseTerminalTabComponent<Profile>, config.secondTab);
-                    });
-            }
-        });
+        tab.disableDynamicTitle = true;
+        tab.sessionChanged$
+            .pipe(
+                filter((session) => !!session),
+                delay(100),
+                take(1),
+            )
+            .subscribe(() => {
+                this.customizeTab(tab, config);
+                if (config.split && config.secondTab) {
+                    from((tab.parent as SplitTabComponent).splitTab(tab, config.split))
+                        .pipe(take(1))
+                        .subscribe((newTab) => {
+                            config.secondTab.title = config.title;
+                            config.secondTab.color = config.color;
+                            this.configureTab(newTab as BaseTerminalTabComponent<Profile>, config.secondTab);
+                        });
+                }
+            });
     }
 
     private findTerminalProfile(profiles: PartialProfile<Profile>[], element: TabConfig): PartialProfile<Profile> {
