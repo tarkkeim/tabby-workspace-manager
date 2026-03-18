@@ -8,7 +8,7 @@ import { ElectronService } from 'tabby-electron';
 import { HotkeysService } from 'tabby-core';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { delay, filter, from, take } from 'rxjs';
+import { filter, lastValueFrom, take } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class WorkspaceManagerService {
@@ -85,32 +85,27 @@ export class WorkspaceManagerService {
         const tab = (await this.profileService.openNewTabForProfile(
             selectedProfile,
         )) as BaseTerminalTabComponent<Profile>;
-        this.configureTab(tab, config);
+        await this.configureTab(tab, config);
     }
 
-    private configureTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): void {
-        tab.sessionChanged$
-            .pipe(
+    private async configureTab(tab: BaseTerminalTabComponent<Profile>, config: TabConfig): Promise<void> {
+        await lastValueFrom(
+            tab.sessionChanged$.pipe(
                 filter((session) => !!session),
-                delay(100),
                 take(1),
-            )
-            .subscribe(() => {
-                this.customizeTab(tab, config);
-                if (config.splits) {
-                    const parent = tab.parent as SplitTabComponent;
-                    for (const split of config.splits) {
-                        // Force apply main tab title and color to splits
-                        split.title = config.title;
-                        split.color = config.color;
-                        from(parent.splitTab(tab, split.direction))
-                            .pipe(delay(100), take(1))
-                            .subscribe((newTab) => {
-                                this.configureTab(newTab as BaseTerminalTabComponent<Profile>, split);
-                            });
-                    }
-                }
-            });
+            ),
+        );
+        this.customizeTab(tab, config);
+        if (config.splits) {
+            const parent = tab.parent as SplitTabComponent;
+            for (const split of config.splits) {
+                // Force apply main tab title and color to splits
+                split.title = config.title;
+                split.color = config.color;
+                const newTab = await parent.splitTab(tab, split.direction);
+                await this.configureTab(newTab as BaseTerminalTabComponent<Profile>, split);
+            }
+        }
     }
 
     private findTerminalProfile(profiles: PartialProfile<Profile>[], element: TabConfig): PartialProfile<Profile> {
