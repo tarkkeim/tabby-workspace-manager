@@ -1,6 +1,6 @@
 {
     "name": "tabby-workspace-manager",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Gives a possibility to create workspace profiles with custom tabs. Forked from https://github.com/composer404/tabby-workspace-manager.",
     "keywords": [
         "tabby-plugin"

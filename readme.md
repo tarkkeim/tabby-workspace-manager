@@ -16,7 +16,7 @@
 
 | Tabby version      | Plugin version        |
 | ------------------ | --------------------- |
-| 1.0.229 to 1.0.230 | 0.0.7                 |
+| 1.0.229 to 1.0.230 | 0.0.7 to latest       |
 | before 1.0.229     | do not use the plugin |
 
 ### Installation
