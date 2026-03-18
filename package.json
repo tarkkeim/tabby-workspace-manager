@@ -1,7 +1,7 @@
 {
     "name": "tabby-workspace-manager",
     "version": "0.0.7",
-    "description": "Gives a possibilty to create workspace profiles with custom tabs",
+    "description": "Gives a possibility to create workspace profiles with custom tabs. Forked from https://github.com/composer404/tabby-workspace-manager.",
     "keywords": [
         "tabby-plugin"
     ],
@@ -17,13 +17,16 @@
         "dist"
     ],
     "bugs": {
-        "url": "https://github.com/composer404/tabby-workspace-manager/issues"
+        "url": "https://github.com/tarkkeim/tabby-workspace-manager/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/composer404/tabby-workspace-manager"
+        "url": "git+https://github.com/tarkkeim/tabby-workspace-manager"
     },
     "author": "Przemyslaw Kozik",
+    "contributors": [
+        "Johnny Martin"
+    ],
     "license": "MIT",
     "devDependencies": {
         "@angular/animations": "^15.2.6",
