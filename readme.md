@@ -16,13 +16,16 @@
 
 | Tabby version      | Plugin version        |
 | ------------------ | --------------------- |
-| 1.0.229 to 1.0.230 | 0.0.7 to latest       |
+| 1.0.230 to 1.0.234 | 0.0.8                 |
+| 1.0.229            | 0.0.7                 |
 | before 1.0.229     | do not use the plugin |
+
+If a newer version of Tabby is not listed in the table above, then it means that I have not verified the plugin's compatibility.
 
 ### Installation
 
 -   Download the [latest release](https://github.com/tarkkeim/tabby-workspace-manager/releases)
--   Locate your plugin folder by clicking Tabby's dedicated button (`%AppData%\tabby\plugins` for Windows users): <img src="https://github.com/tarkkeim/tabby-workspace-manager/assets/121796416/985c063d-6e94-4085-858b-36c4e65d4d8d">
+-   Locate your plugin folder by clicking Tabby's dedicated button: <img src="https://github.com/tarkkeim/tabby-workspace-manager/assets/121796416/985c063d-6e94-4085-858b-36c4e65d4d8d">
 -   Create a `node_modules` folder in the `plugins` folder, if it does not already exist
 -   Unzip the content of the downloaded release in a folder named `tabby-workspace-manager`, inside the `node_modules` folder
 -   Restart Tabby
